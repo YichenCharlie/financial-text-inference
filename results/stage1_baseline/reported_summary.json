@@ -1,0 +1,38 @@
+{
+  "source": "原始训练终端输出的汇总，不是重新训练的结果",
+  "class_order": [
+    "non_negative",
+    "negative"
+  ],
+  "train_articles": 8940,
+  "validation_articles": 993,
+  "train_class_counts": [
+    5703,
+    11471
+  ],
+  "validation_class_counts": [
+    623,
+    1319
+  ],
+  "confusion_matrix": [
+    [
+      197,
+      426
+    ],
+    [
+      110,
+      1209
+    ]
+  ],
+  "majority_baseline": {
+    "accuracy": 0.6792,
+    "macro_f1": 0.4045
+  },
+  "tfidf_logistic_fulltext": {
+    "accuracy": 0.724,
+    "macro_f1": 0.6211
+  },
+  "n_iter": 53,
+  "max_iter": 1000,
+  "test_evaluated": false
+}

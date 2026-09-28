@@ -1,0 +1,10 @@
+{
+  "majority_baseline": {
+    "accuracy": 0.6791967044284243,
+    "macro_f1": 0.40447715424716346
+  },
+  "tfidf_logistic_fulltext": {
+    "accuracy": 0.7239958805355304,
+    "macro_f1": 0.6211035155539054
+  }
+}
