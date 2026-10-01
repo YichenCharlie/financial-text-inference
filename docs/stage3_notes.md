@@ -1,9 +1,9 @@
 # Stage 3 — BERT Fine-tuning 与结果分析
 
-本阶段在已有数据划分上完成 BERT fine-tuning（微调），重点是建立正式的 validation 结果，并理解性能变化背后的得失。训练使用 17,174 条 sample，评估使用固定的 1,942 条 validation sample；本次需要回答的是：BERT 在当前输入条件下改善了哪些判断，哪些错误仍然存在，以及这些错误是否与模型实际看到的信息有关。
-
-项目：Financial Text Analysis and Inference System
+项目：Financial Text Analysis and Inference System  
 记录日期：2026 年 10 月 1 日—10 月 2 日
+
+本阶段在已有数据划分上完成 BERT fine-tuning（微调），重点是建立正式的 validation 结果，并理解性能变化背后的得失。训练使用 17,174 条 sample，评估使用固定的 1,942 条 validation sample；本次需要回答的是：BERT 在当前输入条件下改善了哪些判断，哪些错误仍然存在，以及这些错误是否与模型实际看到的信息有关。
 
 ## 1. 长文本统计决定了这次实验的边界
 
