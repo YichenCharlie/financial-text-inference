@@ -73,3 +73,10 @@ FFN 输出经过第二次残差和 LayerNorm 后，才形成完整 Encoder layer
 完整第一层的平均绝对差异约为 `2.14e-7`，对照使用 `atol=1e-5、rtol=1e-5`。这验证了当前输入下手动计算与模型原生计算的数值一致性，不代表已穷尽所有输入或完成性能优化。
 
 原生模型使用 `BertSdpaSelfAttention`，手动路径显式构建 attention 矩阵，目的是理解和验证数学过程。不能直接用这段教学实现推断原生实现的耗时、显存占用，或认定 SDPA 一定使用了某个特定融合内核。
+
+## 完整 Forward 验证与阶段收尾
+
+使用 `scripts/stage4_verify_bert_forward.py`，在 CPU、eval 和 inference_mode 下，将 Embedding、12 个 Encoder layers、CLS 选择、Pooler 和分类层依次连接，并与原生 `model(**inputs)` 对照。当前验证样本中，Embedding、每一层输出及最终 logits 的最大绝对差异均为 0。此次分步执行复用了模型原生模块，验证的是完整计算路径的连接；此前手动重建第一层的实验，则验证了 attention、残差、LayerNorm 和 FFN 的内部数学计算。
+
+12 层输出始终保持 `(1, 512, 768)`。模型随后选择最后一层的 CLS 位置，得到 `(1, 768)`，经 Pooler 的 Linear 和 Tanh 后，由分类层映射为 `(1, 2)`。选择 CLS 不等于平均所有 token；CLS 在此前的 attention 中已经获取上下文信息。最终 logits 为 `[-1.9187686, 2.6119726]`，Softmax 概率为 `[0.0106579, 0.9893421]`，预测为 negative，与原生调用一致。
+

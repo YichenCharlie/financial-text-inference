@@ -1,0 +1,149 @@
+{
+  "metadata": {
+    "torch_version": "2.5.1+cu124",
+    "transformers_version": "4.57.1",
+    "cuda_version": "12.4",
+    "gpu": "NVIDIA GeForce RTX 3090",
+    "dtype": "torch.float32",
+    "input_shape": [
+      1,
+      512
+    ],
+    "effective_tokens": [
+      512
+    ],
+    "attention_class": "BertSdpaSelfAttention",
+    "article_id": 670743278,
+    "company": "深圳市华彩世纪化妆品有限公司",
+    "warmup": 10,
+    "profile_repeats": 3,
+    "matmul_allow_tf32": false,
+    "float32_matmul_precision": "highest",
+    "prediction": 1,
+    "probabilities": [
+      0.010657873935997486,
+      0.9893420934677124
+    ]
+  },
+  "operator_self_gpu_ms_per_forward": 7.9964360000000045,
+  "operators": [
+    {
+      "name": "aten::addmm",
+      "calls_per_forward": 74.0,
+      "self_gpu_ms_per_forward": 5.650838333333336
+    },
+    {
+      "name": "aten::_efficient_attention_forward",
+      "calls_per_forward": 12.0,
+      "self_gpu_ms_per_forward": 1.8744746666666678
+    },
+    {
+      "name": "aten::gelu",
+      "calls_per_forward": 12.0,
+      "self_gpu_ms_per_forward": 0.17805666666666609
+    },
+    {
+      "name": "aten::native_layer_norm",
+      "calls_per_forward": 25.0,
+      "self_gpu_ms_per_forward": 0.14438466666666622
+    },
+    {
+      "name": "aten::add",
+      "calls_per_forward": 25.0,
+      "self_gpu_ms_per_forward": 0.11755766666666932
+    },
+    {
+      "name": "aten::index_select",
+      "calls_per_forward": 3.0,
+      "self_gpu_ms_per_forward": 0.020499999999998485
+    },
+    {
+      "name": "aten::all",
+      "calls_per_forward": 1.0,
+      "self_gpu_ms_per_forward": 0.003114666666666987
+    },
+    {
+      "name": "aten::add_",
+      "calls_per_forward": 1.0,
+      "self_gpu_ms_per_forward": 0.0029759999999999613
+    },
+    {
+      "name": "aten::eq",
+      "calls_per_forward": 1.0,
+      "self_gpu_ms_per_forward": 0.0015360000000006644
+    },
+    {
+      "name": "aten::tanh",
+      "calls_per_forward": 1.0,
+      "self_gpu_ms_per_forward": 0.0015253333333342502
+    },
+    {
+      "name": "aten::_local_scalar_dense",
+      "calls_per_forward": 1.0,
+      "self_gpu_ms_per_forward": 0.0014719999999988432
+    }
+  ],
+  "modules": [
+    {
+      "name": "Embedding",
+      "gpu_ms_per_forward": 0.2552673333333329
+    },
+    {
+      "name": "Encoder_01",
+      "gpu_ms_per_forward": 1.0066073333333334
+    },
+    {
+      "name": "Encoder_02",
+      "gpu_ms_per_forward": 0.7700479999999995
+    },
+    {
+      "name": "Encoder_03",
+      "gpu_ms_per_forward": 0.754454000000001
+    },
+    {
+      "name": "Encoder_04",
+      "gpu_ms_per_forward": 0.7546673333333335
+    },
+    {
+      "name": "Encoder_05",
+      "gpu_ms_per_forward": 0.7357040000000002
+    },
+    {
+      "name": "Encoder_06",
+      "gpu_ms_per_forward": 0.7464973333333328
+    },
+    {
+      "name": "Encoder_07",
+      "gpu_ms_per_forward": 0.7517236666666668
+    },
+    {
+      "name": "Encoder_08",
+      "gpu_ms_per_forward": 0.740897666666667
+    },
+    {
+      "name": "Encoder_09",
+      "gpu_ms_per_forward": 0.7500063333333359
+    },
+    {
+      "name": "Encoder_10",
+      "gpu_ms_per_forward": 0.7349783333333332
+    },
+    {
+      "name": "Encoder_11",
+      "gpu_ms_per_forward": 0.743969666666669
+    },
+    {
+      "name": "Encoder_12",
+      "gpu_ms_per_forward": 0.7490793333333343
+    },
+    {
+      "name": "Pooler",
+      "gpu_ms_per_forward": 0.049564333333334314
+    },
+    {
+      "name": "Classifier",
+      "gpu_ms_per_forward": 0.004373000000000805
+    }
+  ],
+  "timing_note": "Profiler-attributed GPU execution times, averaged over recorded forwards. Not unprofiled request latency."
+}

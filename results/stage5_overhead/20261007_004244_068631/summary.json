@@ -1,0 +1,87 @@
+{
+  "gpu": "NVIDIA GeForce RTX 3090",
+  "torch_version": "2.5.1+cu124",
+  "input_shape": [
+    1,
+    512
+  ],
+  "dtype": "torch.float32",
+  "warmup": 20,
+  "repeats": 20,
+  "orders": [
+    [
+      "baseline",
+      "hooks",
+      "profiler"
+    ],
+    [
+      "hooks",
+      "profiler",
+      "baseline"
+    ],
+    [
+      "profiler",
+      "baseline",
+      "hooks"
+    ]
+  ],
+  "records": {
+    "baseline": [
+      {
+        "cuda_interval_ms": 8.331929779052734,
+        "wall_ms": 8.332543075084686
+      },
+      {
+        "cuda_interval_ms": 8.39908447265625,
+        "wall_ms": 8.39969590306282
+      },
+      {
+        "cuda_interval_ms": 8.398992156982422,
+        "wall_ms": 8.399593457579613
+      }
+    ],
+    "hooks": [
+      {
+        "cuda_interval_ms": 8.332083129882813,
+        "wall_ms": 8.332690969109535
+      },
+      {
+        "cuda_interval_ms": 10.677184295654296,
+        "wall_ms": 10.677753761410713
+      },
+      {
+        "cuda_interval_ms": 11.081905364990234,
+        "wall_ms": 11.082456260919571
+      }
+    ],
+    "profiler": [
+      {
+        "cuda_interval_ms": 11.463516998291016,
+        "wall_ms": 11.464495956897736
+      },
+      {
+        "cuda_interval_ms": 9.096782684326172,
+        "wall_ms": 9.097574651241302
+      },
+      {
+        "cuda_interval_ms": 9.337857818603515,
+        "wall_ms": 9.33866910636425
+      }
+    ]
+  },
+  "summary": {
+    "baseline": {
+      "cuda_interval_ms": 8.398992156982422,
+      "wall_ms": 8.399593457579613
+    },
+    "hooks": {
+      "cuda_interval_ms": 10.677184295654296,
+      "wall_ms": 10.677753761410713
+    },
+    "profiler": {
+      "cuda_interval_ms": 9.337857818603515,
+      "wall_ms": 9.33866910636425
+    }
+  },
+  "note": "Repeated forward blocks with GPU-resident input. Not end-to-end request latency. Profiler setup, teardown and export are excluded."
+}

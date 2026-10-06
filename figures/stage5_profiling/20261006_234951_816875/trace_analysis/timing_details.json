@@ -1,0 +1,280 @@
+{
+  "source_trace": "/root/autodl-tmp/financial-text-inference/results/stage5_profiling/20261006_234951_816875/trace.json",
+  "selected_forward": "FORWARD_02",
+  "selected_module": "MODULE::Encoder_02",
+  "cpu_module_ms": 0.7164320000000001,
+  "kernel_sum_ms": 0.688625,
+  "kernel_span_ms": 0.7399170532226562,
+  "module_invocations": [
+    {
+      "module": "Embedding",
+      "kernel_count": 6,
+      "kernel_sum_ms": 0.03443,
+      "kernel_span_ms": 0.421218994140625
+    },
+    {
+      "module": "Encoder_01",
+      "kernel_count": 12,
+      "kernel_sum_ms": 0.695631,
+      "kernel_span_ms": 1.4300759887695313
+    },
+    {
+      "module": "Encoder_02",
+      "kernel_count": 12,
+      "kernel_sum_ms": 0.689136,
+      "kernel_span_ms": 0.8020560302734375
+    },
+    {
+      "module": "Encoder_03",
+      "kernel_count": 12,
+      "kernel_sum_ms": 0.687824,
+      "kernel_span_ms": 0.77514599609375
+    },
+    {
+      "module": "Encoder_04",
+      "kernel_count": 12,
+      "kernel_sum_ms": 0.689712,
+      "kernel_span_ms": 0.7490360107421875
+    },
+    {
+      "module": "Encoder_05",
+      "kernel_count": 12,
+      "kernel_sum_ms": 0.6920470000000001,
+      "kernel_span_ms": 0.73639697265625
+    },
+    {
+      "module": "Encoder_06",
+      "kernel_count": 12,
+      "kernel_sum_ms": 0.6929099999999999,
+      "kernel_span_ms": 0.7521069946289063
+    },
+    {
+      "module": "Encoder_07",
+      "kernel_count": 12,
+      "kernel_sum_ms": 0.69336,
+      "kernel_span_ms": 0.7387969970703125
+    },
+    {
+      "module": "Encoder_08",
+      "kernel_count": 12,
+      "kernel_sum_ms": 0.690735,
+      "kernel_span_ms": 0.722509033203125
+    },
+    {
+      "module": "Encoder_09",
+      "kernel_count": 12,
+      "kernel_sum_ms": 0.6903830000000001,
+      "kernel_span_ms": 0.7476600341796875
+    },
+    {
+      "module": "Encoder_10",
+      "kernel_count": 12,
+      "kernel_sum_ms": 0.693873,
+      "kernel_span_ms": 0.7400130004882812
+    },
+    {
+      "module": "Encoder_11",
+      "kernel_count": 12,
+      "kernel_sum_ms": 0.6880459999999999,
+      "kernel_span_ms": 0.7730659790039063
+    },
+    {
+      "module": "Encoder_12",
+      "kernel_count": 12,
+      "kernel_sum_ms": 0.690961,
+      "kernel_span_ms": 0.7276620483398437
+    },
+    {
+      "module": "Pooler",
+      "kernel_count": 4,
+      "kernel_sum_ms": 0.011328,
+      "kernel_span_ms": 0.05692498779296875
+    },
+    {
+      "module": "Classifier",
+      "kernel_count": 1,
+      "kernel_sum_ms": 0.004672,
+      "kernel_span_ms": 0.0046719970703125
+    },
+    {
+      "module": "Embedding",
+      "kernel_count": 6,
+      "kernel_sum_ms": 0.03395,
+      "kernel_span_ms": 0.17624298095703125
+    },
+    {
+      "module": "Encoder_01",
+      "kernel_count": 12,
+      "kernel_sum_ms": 0.6925600000000001,
+      "kernel_span_ms": 0.7935130004882812
+    },
+    {
+      "module": "Encoder_02",
+      "kernel_count": 12,
+      "kernel_sum_ms": 0.688625,
+      "kernel_span_ms": 0.7399170532226562
+    },
+    {
+      "module": "Encoder_03",
+      "kernel_count": 12,
+      "kernel_sum_ms": 0.690225,
+      "kernel_span_ms": 0.7458359985351563
+    },
+    {
+      "module": "Encoder_04",
+      "kernel_count": 12,
+      "kernel_sum_ms": 0.6880149999999999,
+      "kernel_span_ms": 0.7772569580078125
+    },
+    {
+      "module": "Encoder_05",
+      "kernel_count": 12,
+      "kernel_sum_ms": 0.689969,
+      "kernel_span_ms": 0.7290700073242188
+    },
+    {
+      "module": "Encoder_06",
+      "kernel_count": 12,
+      "kernel_sum_ms": 0.69272,
+      "kernel_span_ms": 0.7370039672851563
+    },
+    {
+      "module": "Encoder_07",
+      "kernel_count": 12,
+      "kernel_sum_ms": 0.6921430000000001,
+      "kernel_span_ms": 0.7414839477539062
+    },
+    {
+      "module": "Encoder_08",
+      "kernel_count": 12,
+      "kernel_sum_ms": 0.6883980000000001,
+      "kernel_span_ms": 0.7627949829101562
+    },
+    {
+      "module": "Encoder_09",
+      "kernel_count": 12,
+      "kernel_sum_ms": 0.632658,
+      "kernel_span_ms": 0.7677860717773437
+    },
+    {
+      "module": "Encoder_10",
+      "kernel_count": 12,
+      "kernel_sum_ms": 0.621174,
+      "kernel_span_ms": 0.7360770263671875
+    },
+    {
+      "module": "Encoder_11",
+      "kernel_count": 12,
+      "kernel_sum_ms": 0.616247,
+      "kernel_span_ms": 0.7218379516601563
+    },
+    {
+      "module": "Encoder_12",
+      "kernel_count": 12,
+      "kernel_sum_ms": 0.617687,
+      "kernel_span_ms": 0.7487160034179687
+    },
+    {
+      "module": "Pooler",
+      "kernel_count": 4,
+      "kernel_sum_ms": 0.010751,
+      "kernel_span_ms": 0.050458984375
+    },
+    {
+      "module": "Classifier",
+      "kernel_count": 1,
+      "kernel_sum_ms": 0.004256,
+      "kernel_span_ms": 0.0042559814453125
+    },
+    {
+      "module": "Embedding",
+      "kernel_count": 6,
+      "kernel_sum_ms": 0.029821999999999998,
+      "kernel_span_ms": 0.16834002685546876
+    },
+    {
+      "module": "Encoder_01",
+      "kernel_count": 12,
+      "kernel_sum_ms": 0.624214,
+      "kernel_span_ms": 0.7602039794921875
+    },
+    {
+      "module": "Encoder_02",
+      "kernel_count": 12,
+      "kernel_sum_ms": 0.6149969999999999,
+      "kernel_span_ms": 0.7471799926757813
+    },
+    {
+      "module": "Encoder_03",
+      "kernel_count": 12,
+      "kernel_sum_ms": 0.6186459999999999,
+      "kernel_span_ms": 0.72218994140625
+    },
+    {
+      "module": "Encoder_04",
+      "kernel_count": 12,
+      "kernel_sum_ms": 0.6167910000000001,
+      "kernel_span_ms": 0.7179979858398438
+    },
+    {
+      "module": "Encoder_05",
+      "kernel_count": 12,
+      "kernel_sum_ms": 0.615444,
+      "kernel_span_ms": 0.7303819580078125
+    },
+    {
+      "module": "Encoder_06",
+      "kernel_count": 12,
+      "kernel_sum_ms": 0.618388,
+      "kernel_span_ms": 0.7312449951171875
+    },
+    {
+      "module": "Encoder_07",
+      "kernel_count": 12,
+      "kernel_sum_ms": 0.618421,
+      "kernel_span_ms": 0.7645230102539062
+    },
+    {
+      "module": "Encoder_08",
+      "kernel_count": 12,
+      "kernel_sum_ms": 0.618997,
+      "kernel_span_ms": 0.7331650390625
+    },
+    {
+      "module": "Encoder_09",
+      "kernel_count": 12,
+      "kernel_sum_ms": 0.6174299999999999,
+      "kernel_span_ms": 0.721166015625
+    },
+    {
+      "module": "Encoder_10",
+      "kernel_count": 12,
+      "kernel_sum_ms": 0.618994,
+      "kernel_span_ms": 0.7108619995117188
+    },
+    {
+      "module": "Encoder_11",
+      "kernel_count": 12,
+      "kernel_sum_ms": 0.6177809999999999,
+      "kernel_span_ms": 0.7196940307617188
+    },
+    {
+      "module": "Encoder_12",
+      "kernel_count": 12,
+      "kernel_sum_ms": 0.617236,
+      "kernel_span_ms": 0.7542840576171875
+    },
+    {
+      "module": "Pooler",
+      "kernel_count": 4,
+      "kernel_sum_ms": 0.010719,
+      "kernel_span_ms": 0.0413089599609375
+    },
+    {
+      "module": "Classifier",
+      "kernel_count": 1,
+      "kernel_sum_ms": 0.004190999999999999,
+      "kernel_span_ms": 0.00419097900390625
+    }
+  ]
+}
