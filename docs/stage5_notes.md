@@ -22,7 +22,7 @@ CPU 执行 Python 和 PyTorch 调用，通过 CUDA 接口提交 GPU 工作。CUD
 
 ## 算子开销分布
 
-![GPU 算子耗时分布](../figures/stage5_profiling/TRACE_RUN_ID/operator_gpu_time.png)
+![GPU 算子耗时分布](../figures/stage5_profiling/20261006_234951_816875/operator_gpu_time.png)
 
 图：每次 forward 的 GPU 算子归因 self time。百分比以图中统计的算子 self time 总和为分母，不是完整请求延迟的百分比。
 
@@ -52,7 +52,7 @@ Trace 中实际出现了 `fmha_cutlassF_f32_aligned_64x64_rf_sm80(...)` kernel�
 
 最初模块图使用的数值与 trace 中 GPU 模块标记区间的长度一致。这类区间可能包含 kernel 之间的间隙，不能直接解释成纯 GPU 计算时间。因此，使用 `scripts/stage5_analyze_trace.py` 重新分析已有 trace，将两种指标分别展示：模块关联 kernels 的执行时间之和，以及首个 kernel 开始到最后一个 kernel 结束的时间区间。
 
-![模块 kernel 时间与首尾区间](../figures/stage5_profiling/TRACE_RUN_ID/trace_analysis/module_kernel_time.png)
+![模块 kernel 时间与首尾区间](../figures/stage5_profiling/20261006_234951_816875/trace_analysis/module_kernel_time.png)
 
 图：深色为 kernel 执行时长之和，浅色为 kernel 首尾区间，均按模块调用取平均。Kernel 时间之和不包含 memcpy、memset；若 kernels 重叠执行，其时长之和也不等于实际 GPU 忙碌时间。
 
@@ -60,7 +60,7 @@ Trace 中实际出现了 `fmha_cutlassF_f32_aligned_64x64_rf_sm80(...)` kernel�
 
 ## 一个 Encoder layer 的 CPU/GPU 时间线
 
-![Encoder layer 的 CPU 与 GPU 时间线](../figures/stage5_profiling/TRACE_RUN_ID/trace_analysis/encoder_cpu_gpu_timeline.png)
+![Encoder layer 的 CPU 与 GPU 时间线](../figures/stage5_profiling/20261006_234951_816875/trace_analysis/encoder_cpu_gpu_timeline.png)
 
 图：第二次 forward 的第二个 Encoder layer。上方为选定 CPU 算子区间，中间为 CUDA 提交调用，下方为关联 GPU kernels 和内存操作。虚线表示 Linear CPU 调用与首个关联 GPU kernel 的对应关系，不表示同步等待时间。
 
@@ -94,7 +94,7 @@ FFN-up 的 CPU 区间约0.0515 ms，GPU kernel 却执行约0.1314 ms，说明 CP
 
 CUDA Events 指标测量两个 GPU 计时标记之间的区间，可能包含工作之间的间隙，不是 kernel 时间之和。Wall 指标从 CPU 开始计时，直到提交的 GPU 工作完成后停止。两者都除以20，得到每个计时块内平均每次 forward 的耗时；这不是包含 tokenizer 和传输的完整请求延迟。Profiler 启动、退出时的处理及文件导出不计入该区间。
 
-![观察工具对计时的影响](../figures/stage5_overhead/OVERHEAD_RUN_ID/instrumentation_overhead.png)
+![观察工具对计时的影响](../figures/stage5_overhead/20261007_004244_068631/instrumentation_overhead.png)
 
 图：柱子为3个计时块均值的中位数，散点为每个计时块的均值，保留散点以展示波动。
 
