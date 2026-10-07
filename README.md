@@ -142,50 +142,6 @@ These are profiled kernel-duration sums, separate from the unprofiled forward ti
 
 [Details — notes in Chinese](docs/stage6_notes.md)
 
-## Running the Project
-
-Run commands from the repository root. Obtain the dataset separately and place the source files at `data/raw/train.json` and `data/raw/test.json`. GPU experiments require a CUDA-enabled PyTorch environment; baseline training and plotting additionally require scikit-learn and Matplotlib.
-
-### Prepare data and train
-
-```bash
-python practice/split_data.py
-python scripts/stage1_train_baseline.py
-python scripts/stage3_train_bert.py
-python scripts/stage3_predict_validation.py
-```
-
-Inference experiments load the trained checkpoint and tokenizer from `models/stage3_bert_full/`.
-
-### Verify computation and inspect execution
-
-```bash
-python scripts/stage4_verify_bert_layer.py
-python scripts/stage4_verify_bert_forward.py
-python scripts/stage5_profile_bert.py
-```
-
-### Reproduce the precision comparison
-
-```bash
-python scripts/stage6_inspect_precision.py
-python scripts/stage6_benchmark_precision.py
-python scripts/stage6_validate_precision.py
-python scripts/stage6_profile_precision.py
-```
-
-Stage 6 outputs are written to `results/stage6_precision/`, including:
-
-| File | Contents |
-|---|---|
-| `benchmark.json` | Benchmark configuration and individual timing rounds |
-| `validation_summary.json` | Classification metrics and numerical differences |
-| `validation_comparison.jsonl` | Per-sample predictions and probabilities |
-| `profiling/kernel_comparison.json` | Kernel names and timing breakdowns |
-
-Run performance measurements without competing GPU workloads. Stage 6 scripts use fixed output paths and update their results when rerun.
-
-
 ## Project Organization
 
 | Directory | Purpose |
