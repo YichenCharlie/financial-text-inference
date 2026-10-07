@@ -1,0 +1,390 @@
+{
+  "gpu": "NVIDIA GeForce RTX 3090",
+  "torch_version": "2.5.1+cu124",
+  "input_shape": [
+    1,
+    512
+  ],
+  "profile_repeats": 5,
+  "autocast_scope": "one context per forward",
+  "matmul_allow_tf32": false,
+  "results": {
+    "fp32": {
+      "group_kernel_ms_per_forward": {
+        "Linear": 5.869305999999995,
+        "Attention core": 1.9810260000000004,
+        "GELU": 0.17879019999999995,
+        "LayerNorm": 0.15121439999999994,
+        "Elementwise add": 0.12273620000000007,
+        "Copy / conversion": 0.0,
+        "Embedding lookup": 0.020931599999999998,
+        "Other": 0.0065991999999999995
+      },
+      "operators": [
+        {
+          "operator": "aten::addmm",
+          "kernel_ms_per_forward": 5.869305999999996,
+          "kernels_per_forward": 76.0
+        },
+        {
+          "operator": "aten::_efficient_attention_forward",
+          "kernel_ms_per_forward": 1.9810260000000004,
+          "kernels_per_forward": 12.0
+        },
+        {
+          "operator": "aten::gelu",
+          "kernel_ms_per_forward": 0.17879019999999995,
+          "kernels_per_forward": 12.0
+        },
+        {
+          "operator": "aten::native_layer_norm",
+          "kernel_ms_per_forward": 0.15121440000000003,
+          "kernels_per_forward": 25.0
+        },
+        {
+          "operator": "aten::add",
+          "kernel_ms_per_forward": 0.11963839999999999,
+          "kernels_per_forward": 25.0
+        },
+        {
+          "operator": "aten::index_select",
+          "kernel_ms_per_forward": 0.020931599999999998,
+          "kernels_per_forward": 3.0
+        },
+        {
+          "operator": "aten::all",
+          "kernel_ms_per_forward": 0.0032902,
+          "kernels_per_forward": 1.0
+        },
+        {
+          "operator": "aten::add_",
+          "kernel_ms_per_forward": 0.0030978000000000004,
+          "kernels_per_forward": 1.0
+        },
+        {
+          "operator": "aten::tanh",
+          "kernel_ms_per_forward": 0.0016832,
+          "kernels_per_forward": 1.0
+        },
+        {
+          "operator": "aten::eq",
+          "kernel_ms_per_forward": 0.0016257999999999997,
+          "kernels_per_forward": 1.0
+        }
+      ],
+      "kernels": [
+        {
+          "group": "Linear",
+          "operator": "aten::addmm",
+          "kernel_name": "ampere_sgemm_128x64_tn",
+          "kernel_ms_per_forward": 5.854775599999996,
+          "kernels_per_forward": 72.0
+        },
+        {
+          "group": "Attention core",
+          "operator": "aten::_efficient_attention_forward",
+          "kernel_name": "fmha_cutlassF_f32_aligned_64x64_rf_sm80(PyTorchMemEffAttention::AttentionKernel<float, cutlass::arch::Sm80, true, 64, 64, 64, true, true>::Params)",
+          "kernel_ms_per_forward": 1.9810260000000004,
+          "kernels_per_forward": 12.0
+        },
+        {
+          "group": "GELU",
+          "operator": "aten::gelu",
+          "kernel_name": "void at::native::vectorized_elementwise_kernel<4, at::native::GeluCUDAKernelImpl(at::TensorIteratorBase&, at::native::GeluType)::{lambda()#2}::operator()() const::{lambda()#2}::operator()() const::{lambda(float)#1}, at::detail::Array<char*, 2> >(int, at::native::GeluCUDAKernelImpl(at::TensorIteratorBase&, at::native::GeluType)::{lambda()#2}::operator()() const::{lambda()#2}::operator()() const::{lambda(float)#1}, at::detail::Array<char*, 2>)",
+          "kernel_ms_per_forward": 0.17879019999999995,
+          "kernels_per_forward": 12.0
+        },
+        {
+          "group": "LayerNorm",
+          "operator": "aten::native_layer_norm",
+          "kernel_name": "void at::native::(anonymous namespace)::vectorized_layer_norm_kernel<float, float>(int, float, float const*, float const*, float const*, float*, float*, float*)",
+          "kernel_ms_per_forward": 0.15121440000000003,
+          "kernels_per_forward": 25.0
+        },
+        {
+          "group": "Elementwise add",
+          "operator": "aten::add",
+          "kernel_name": "void at::native::vectorized_elementwise_kernel<4, at::native::CUDAFunctor_add<float>, at::detail::Array<char*, 3> >(int, at::native::CUDAFunctor_add<float>, at::detail::Array<char*, 3>)",
+          "kernel_ms_per_forward": 0.11963839999999999,
+          "kernels_per_forward": 25.0
+        },
+        {
+          "group": "Embedding lookup",
+          "operator": "aten::index_select",
+          "kernel_name": "void at::native::(anonymous namespace)::indexSelectLargeIndex<float, long, unsigned int, 2, 2, -2, true>(at::cuda::detail::TensorInfo<float, unsigned int>, at::cuda::detail::TensorInfo<float const, unsigned int>, at::cuda::detail::TensorInfo<long const, unsigned int>, int, int, unsigned int, unsigned int, long)",
+          "kernel_ms_per_forward": 0.020931599999999998,
+          "kernels_per_forward": 3.0
+        },
+        {
+          "group": "Linear",
+          "operator": "aten::addmm",
+          "kernel_name": "std::enable_if<!(false), void>::type internal::gemvx::kernel<int, int, float, float, float, float, false, true, true, false, 6, false, cublasGemvParamsEx<int, cublasGemvTensorStridedBatched<float const>, cublasGemvTensorStridedBatched<float const>, cublasGemvTensorStridedBatched<float>, float> >(cublasGemvParamsEx<int, cublasGemvTensorStridedBatched<float const>, cublasGemvTensorStridedBatched<float const>, cublasGemvTensorStridedBatched<float>, float>)",
+          "kernel_ms_per_forward": 0.006138599999999999,
+          "kernels_per_forward": 1.0
+        },
+        {
+          "group": "Linear",
+          "operator": "aten::addmm",
+          "kernel_name": "void gemv2T_kernel_val<int, int, float, float, float, float, 128, 16, 2, 2, false, true, cublasGemvParamsEx<int, cublasGemvTensorStridedBatched<float const>, cublasGemvTensorStridedBatched<float const>, cublasGemvTensorStridedBatched<float>, float> >(cublasGemvParamsEx<int, cublasGemvTensorStridedBatched<float const>, cublasGemvTensorStridedBatched<float const>, cublasGemvTensorStridedBatched<float>, float>, float, float)",
+          "kernel_ms_per_forward": 0.0047945999999999996,
+          "kernels_per_forward": 1.0
+        },
+        {
+          "group": "Other",
+          "operator": "aten::all",
+          "kernel_name": "void at::native::reduce_kernel<512, 1, at::native::ReduceOp<bool, at::native::func_wrapper_t<bool, at::native::and_kernel_cuda(at::TensorIterator&)::{lambda()#1}::operator()() const::{lambda()#12}::operator()() const::{lambda(bool, bool)#1}>, unsigned int, bool, 4> >(at::native::ReduceOp<bool, at::native::func_wrapper_t<bool, at::native::and_kernel_cuda(at::TensorIterator&)::{lambda()#1}::operator()() const::{lambda()#12}::operator()() const::{lambda(bool, bool)#1}>, unsigned int, bool, 4>)",
+          "kernel_ms_per_forward": 0.0032902,
+          "kernels_per_forward": 1.0
+        },
+        {
+          "group": "Elementwise add",
+          "operator": "aten::add_",
+          "kernel_name": "void at::native::vectorized_elementwise_kernel<4, at::native::CUDAFunctor_add<float>, at::detail::Array<char*, 3> >(int, at::native::CUDAFunctor_add<float>, at::detail::Array<char*, 3>)",
+          "kernel_ms_per_forward": 0.0030978000000000004,
+          "kernels_per_forward": 1.0
+        },
+        {
+          "group": "Linear",
+          "operator": "aten::addmm",
+          "kernel_name": "void cublasLt::epilogue::impl::globalKernel<8, 32, float, float, float, true, true, 1>(int, int, long, float*, cublasLtEpilogue_t, int, float*, long, void*, long, long, long, float*, long, int*)",
+          "kernel_ms_per_forward": 0.0018179999999999997,
+          "kernels_per_forward": 1.0
+        },
+        {
+          "group": "Linear",
+          "operator": "aten::addmm",
+          "kernel_name": "void cublasLt::splitKreduce_kernel<32, 16, int, float, float, float, float, true, false, false>(cublasLt::cublasSplitKParams<float>, float const*, float const*, float*, float const*, float const*, float const*, float const*, float*, void*, long, float*, int*)",
+          "kernel_ms_per_forward": 0.0017792000000000003,
+          "kernels_per_forward": 1.0
+        },
+        {
+          "group": "Other",
+          "operator": "aten::tanh",
+          "kernel_name": "void at::native::vectorized_elementwise_kernel<4, at::native::tanh_kernel_cuda(at::TensorIteratorBase&)::{lambda()#2}::operator()() const::{lambda()#2}::operator()() const::{lambda(float)#1}, at::detail::Array<char*, 2> >(int, at::native::tanh_kernel_cuda(at::TensorIteratorBase&)::{lambda()#2}::operator()() const::{lambda()#2}::operator()() const::{lambda(float)#1}, at::detail::Array<char*, 2>)",
+          "kernel_ms_per_forward": 0.0016832,
+          "kernels_per_forward": 1.0
+        },
+        {
+          "group": "Other",
+          "operator": "aten::eq",
+          "kernel_name": "void at::native::vectorized_elementwise_kernel<4, at::native::AUnaryFunctor<long, long, bool, at::native::(anonymous namespace)::CompareEqFunctor<long> >, at::detail::Array<char*, 2> >(int, at::native::AUnaryFunctor<long, long, bool, at::native::(anonymous namespace)::CompareEqFunctor<long> >, at::detail::Array<char*, 2>)",
+          "kernel_ms_per_forward": 0.0016257999999999997,
+          "kernels_per_forward": 1.0
+        }
+      ],
+      "unattributed_kernel_count": 0,
+      "memory_activity": {
+        "gpu_memcpy": {
+          "events_per_forward": 1.0,
+          "ms_per_forward": 0.0013120000000000002
+        },
+        "gpu_memset": {
+          "events_per_forward": 72.0,
+          "ms_per_forward": 0.0419398
+        }
+      }
+    },
+    "amp_fp16": {
+      "group_kernel_ms_per_forward": {
+        "Linear": 1.9652501999999998,
+        "Attention core": 0.2921898000000001,
+        "GELU": 0.0639644,
+        "LayerNorm": 0.13340880000000002,
+        "Elementwise add": 0.1394938,
+        "Copy / conversion": 1.2029219999999987,
+        "Embedding lookup": 0.018933600000000005,
+        "Other": 0.005632399999999999
+      },
+      "operators": [
+        {
+          "operator": "aten::addmm",
+          "kernel_ms_per_forward": 1.965250200000002,
+          "kernels_per_forward": 75.0
+        },
+        {
+          "operator": "aten::copy_",
+          "kernel_ms_per_forward": 1.2029219999999987,
+          "kernels_per_forward": 197.0
+        },
+        {
+          "operator": "aten::_flash_attention_forward",
+          "kernel_ms_per_forward": 0.29218980000000006,
+          "kernels_per_forward": 12.0
+        },
+        {
+          "operator": "aten::add",
+          "kernel_ms_per_forward": 0.136825,
+          "kernels_per_forward": 25.0
+        },
+        {
+          "operator": "aten::native_layer_norm",
+          "kernel_ms_per_forward": 0.13340879999999997,
+          "kernels_per_forward": 25.0
+        },
+        {
+          "operator": "aten::gelu",
+          "kernel_ms_per_forward": 0.0639644,
+          "kernels_per_forward": 12.0
+        },
+        {
+          "operator": "aten::index_select",
+          "kernel_ms_per_forward": 0.018933600000000002,
+          "kernels_per_forward": 3.0
+        },
+        {
+          "operator": "aten::all",
+          "kernel_ms_per_forward": 0.0028162,
+          "kernels_per_forward": 1.0
+        },
+        {
+          "operator": "aten::add_",
+          "kernel_ms_per_forward": 0.0026688000000000003,
+          "kernels_per_forward": 1.0
+        },
+        {
+          "operator": "aten::tanh",
+          "kernel_ms_per_forward": 0.0014144,
+          "kernels_per_forward": 1.0
+        },
+        {
+          "operator": "aten::eq",
+          "kernel_ms_per_forward": 0.0014018000000000001,
+          "kernels_per_forward": 1.0
+        }
+      ],
+      "kernels": [
+        {
+          "group": "Copy / conversion",
+          "operator": "aten::copy_",
+          "kernel_name": "void at::native::unrolled_elementwise_kernel<at::native::direct_copy_kernel_cuda(at::TensorIteratorBase&)::{lambda()#3}::operator()() const::{lambda()#10}::operator()() const::{lambda(c10::Half)#1}, at::detail::Array<char*, 2>, TrivialOffsetCalculator<1, unsigned int>, TrivialOffsetCalculator<1, unsigned int>, at::native::memory::LoadWithCast<1>, at::native::memory::StoreWithCast<1> >(int, at::native::direct_copy_kernel_cuda(at::TensorIteratorBase&)::{lambda()#3}::operator()() const::{lambda()#10}::operator()() const::{lambda(c10::Half)#1}, at::detail::Array<char*, 2>, TrivialOffsetCalculator<1, unsigned int>, TrivialOffsetCalculator<1, unsigned int>, at::native::memory::LoadWithCast<1>, at::native::memory::StoreWithCast<1>)",
+          "kernel_ms_per_forward": 1.2029219999999987,
+          "kernels_per_forward": 197.0
+        },
+        {
+          "group": "Linear",
+          "operator": "aten::addmm",
+          "kernel_name": "ampere_fp16_s16816gemm_fp16_128x64_ldg8_relu_f2f_stages_64x3_tn",
+          "kernel_ms_per_forward": 0.7946957999999997,
+          "kernels_per_forward": 48.0
+        },
+        {
+          "group": "Linear",
+          "operator": "aten::addmm",
+          "kernel_name": "void cutlass::Kernel2<cutlass_80_tensorop_f16_s16816gemm_relu_f16_64x128_32x6_tn_align8>(cutlass_80_tensorop_f16_s16816gemm_relu_f16_64x128_32x6_tn_align8::Params)",
+          "kernel_ms_per_forward": 0.6497312000000002,
+          "kernels_per_forward": 12.0
+        },
+        {
+          "group": "Linear",
+          "operator": "aten::addmm",
+          "kernel_name": "sm80_xmma_gemm_f16f16_f16f32_f32_tn_n_tilesize192x128x32_stage3_warpsize4x2x1_tensor16x8x16_kernel",
+          "kernel_ms_per_forward": 0.5140959999999997,
+          "kernels_per_forward": 12.0
+        },
+        {
+          "group": "Attention core",
+          "operator": "aten::_flash_attention_forward",
+          "kernel_name": "void pytorch_flash::flash_fwd_kernel<pytorch_flash::Flash_fwd_kernel_traits<64, 128, 128, 4, false, false, cutlass::half_t, pytorch_flash::Flash_kernel_traits<64, 128, 128, 4, cutlass::half_t> >, false, false, false, false, true, true, false>(pytorch_flash::Flash_fwd_params)",
+          "kernel_ms_per_forward": 0.29218980000000006,
+          "kernels_per_forward": 12.0
+        },
+        {
+          "group": "Elementwise add",
+          "operator": "aten::add",
+          "kernel_name": "void at::native::unrolled_elementwise_kernel<at::native::CUDAFunctor_add<float>, at::detail::Array<char*, 3>, TrivialOffsetCalculator<2, unsigned int>, TrivialOffsetCalculator<1, unsigned int>, at::native::memory::LoadWithCast<2>, at::native::memory::StoreWithCast<1> >(int, at::native::CUDAFunctor_add<float>, at::detail::Array<char*, 3>, TrivialOffsetCalculator<2, unsigned int>, TrivialOffsetCalculator<1, unsigned int>, at::native::memory::LoadWithCast<2>, at::native::memory::StoreWithCast<1>)",
+          "kernel_ms_per_forward": 0.1342202,
+          "kernels_per_forward": 24.0
+        },
+        {
+          "group": "LayerNorm",
+          "operator": "aten::native_layer_norm",
+          "kernel_name": "void at::native::(anonymous namespace)::vectorized_layer_norm_kernel<float, float>(int, float, float const*, float const*, float const*, float*, float*, float*)",
+          "kernel_ms_per_forward": 0.13340879999999997,
+          "kernels_per_forward": 25.0
+        },
+        {
+          "group": "GELU",
+          "operator": "aten::gelu",
+          "kernel_name": "void at::native::vectorized_elementwise_kernel<4, at::native::GeluCUDAKernelImpl(at::TensorIteratorBase&, at::native::GeluType)::{lambda()#2}::operator()() const::{lambda()#3}::operator()() const::{lambda(c10::Half)#1}, at::detail::Array<char*, 2> >(int, at::native::GeluCUDAKernelImpl(at::TensorIteratorBase&, at::native::GeluType)::{lambda()#2}::operator()() const::{lambda()#3}::operator()() const::{lambda(c10::Half)#1}, at::detail::Array<char*, 2>)",
+          "kernel_ms_per_forward": 0.0639644,
+          "kernels_per_forward": 12.0
+        },
+        {
+          "group": "Embedding lookup",
+          "operator": "aten::index_select",
+          "kernel_name": "void at::native::(anonymous namespace)::indexSelectLargeIndex<float, long, unsigned int, 2, 2, -2, true>(at::cuda::detail::TensorInfo<float, unsigned int>, at::cuda::detail::TensorInfo<float const, unsigned int>, at::cuda::detail::TensorInfo<long const, unsigned int>, int, int, unsigned int, unsigned int, long)",
+          "kernel_ms_per_forward": 0.018933600000000002,
+          "kernels_per_forward": 3.0
+        },
+        {
+          "group": "Linear",
+          "operator": "aten::addmm",
+          "kernel_name": "std::enable_if<!(false), void>::type internal::gemvx::kernel<int, int, __half, __half, __half, float, false, true, true, false, 7, false, cublasGemvParamsEx<int, cublasGemvTensorStridedBatched<__half const>, cublasGemvTensorStridedBatched<__half const>, cublasGemvTensorStridedBatched<__half>, float> >(cublasGemvParamsEx<int, cublasGemvTensorStridedBatched<__half const>, cublasGemvTensorStridedBatched<__half const>, cublasGemvTensorStridedBatched<__half>, float>)",
+          "kernel_ms_per_forward": 0.0034758,
+          "kernels_per_forward": 1.0
+        },
+        {
+          "group": "Other",
+          "operator": "aten::all",
+          "kernel_name": "void at::native::reduce_kernel<512, 1, at::native::ReduceOp<bool, at::native::func_wrapper_t<bool, at::native::and_kernel_cuda(at::TensorIterator&)::{lambda()#1}::operator()() const::{lambda()#12}::operator()() const::{lambda(bool, bool)#1}>, unsigned int, bool, 4> >(at::native::ReduceOp<bool, at::native::func_wrapper_t<bool, at::native::and_kernel_cuda(at::TensorIterator&)::{lambda()#1}::operator()() const::{lambda()#12}::operator()() const::{lambda(bool, bool)#1}>, unsigned int, bool, 4>)",
+          "kernel_ms_per_forward": 0.0028162,
+          "kernels_per_forward": 1.0
+        },
+        {
+          "group": "Elementwise add",
+          "operator": "aten::add_",
+          "kernel_name": "void at::native::vectorized_elementwise_kernel<4, at::native::CUDAFunctor_add<float>, at::detail::Array<char*, 3> >(int, at::native::CUDAFunctor_add<float>, at::detail::Array<char*, 3>)",
+          "kernel_ms_per_forward": 0.0026688000000000003,
+          "kernels_per_forward": 1.0
+        },
+        {
+          "group": "Elementwise add",
+          "operator": "aten::add",
+          "kernel_name": "void at::native::vectorized_elementwise_kernel<4, at::native::CUDAFunctor_add<float>, at::detail::Array<char*, 3> >(int, at::native::CUDAFunctor_add<float>, at::detail::Array<char*, 3>)",
+          "kernel_ms_per_forward": 0.0026048,
+          "kernels_per_forward": 1.0
+        },
+        {
+          "group": "Linear",
+          "operator": "aten::addmm",
+          "kernel_name": "void reduce_1Block_kernel<float, 128, 7, cublasGemvTensorStridedBatched<float>, cublasGemvTensorStridedBatched<__half const>, cublasGemvTensorStridedBatched<__half> >(float const*, float, cublasGemvTensorStridedBatched<float>, int, float const*, float, cublasGemvTensorStridedBatched<__half const>, cublasGemvTensorStridedBatched<__half>, cublasPointerMode_t, cublasLtEpilogue_t, cublasGemvTensorStridedBatched<biasType<cublasGemvTensorStridedBatched<__half>::value_type, float>::type const>)",
+          "kernel_ms_per_forward": 0.0017024000000000002,
+          "kernels_per_forward": 1.0
+        },
+        {
+          "group": "Linear",
+          "operator": "aten::addmm",
+          "kernel_name": "void dot_kernel<float, 128, 0, cublasDotParams<cublasGemvTensorStridedBatched<__half const>, cublasGemvTensorStridedBatched<float> > >(cublasDotParams<cublasGemvTensorStridedBatched<__half const>, cublasGemvTensorStridedBatched<float> >)",
+          "kernel_ms_per_forward": 0.0015490000000000002,
+          "kernels_per_forward": 1.0
+        },
+        {
+          "group": "Other",
+          "operator": "aten::tanh",
+          "kernel_name": "void at::native::vectorized_elementwise_kernel<4, at::native::tanh_kernel_cuda(at::TensorIteratorBase&)::{lambda()#2}::operator()() const::{lambda()#3}::operator()() const::{lambda(c10::Half)#1}, at::detail::Array<char*, 2> >(int, at::native::tanh_kernel_cuda(at::TensorIteratorBase&)::{lambda()#2}::operator()() const::{lambda()#3}::operator()() const::{lambda(c10::Half)#1}, at::detail::Array<char*, 2>)",
+          "kernel_ms_per_forward": 0.0014144,
+          "kernels_per_forward": 1.0
+        },
+        {
+          "group": "Other",
+          "operator": "aten::eq",
+          "kernel_name": "void at::native::vectorized_elementwise_kernel<4, at::native::AUnaryFunctor<long, long, bool, at::native::(anonymous namespace)::CompareEqFunctor<long> >, at::detail::Array<char*, 2> >(int, at::native::AUnaryFunctor<long, long, bool, at::native::(anonymous namespace)::CompareEqFunctor<long> >, at::detail::Array<char*, 2>)",
+          "kernel_ms_per_forward": 0.0014018000000000001,
+          "kernels_per_forward": 1.0
+        }
+      ],
+      "unattributed_kernel_count": 0,
+      "memory_activity": {
+        "gpu_memcpy": {
+          "events_per_forward": 1.0,
+          "ms_per_forward": 0.0011908
+        },
+        "gpu_memset": {
+          "events_per_forward": 0.0,
+          "ms_per_forward": 0.0
+        }
+      }
+    }
+  },
+  "note": "Sums of kernel durations grouped by associated CPU operator. Excludes memcpy/memset from the chart. Not a replacement for unprofiled benchmarking."
+}

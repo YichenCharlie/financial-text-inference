@@ -1,0 +1,96 @@
+{
+  "metadata": {
+    "gpu": "NVIDIA GeForce RTX 3090",
+    "torch_version": "2.5.1+cu124",
+    "transformers_version": "4.57.1",
+    "input_shape": [
+      1,
+      512
+    ],
+    "parameter_dtype": "torch.float32",
+    "company": "深圳市华彩世纪化妆品有限公司",
+    "warmup": 20,
+    "repeats_per_block": 50,
+    "rounds": 4,
+    "autocast_scope": "one context per forward",
+    "matmul_allow_tf32": false,
+    "float32_matmul_precision": "highest"
+  },
+  "orders": [
+    [
+      "fp32",
+      "amp_fp16"
+    ],
+    [
+      "amp_fp16",
+      "fp32"
+    ],
+    [
+      "fp32",
+      "amp_fp16"
+    ],
+    [
+      "amp_fp16",
+      "fp32"
+    ]
+  ],
+  "records": {
+    "fp32": [
+      {
+        "cuda_interval_ms": 8.263372802734375,
+        "wall_ms": 8.26006755232811
+      },
+      {
+        "cuda_interval_ms": 8.295260009765625,
+        "wall_ms": 8.291892111301422
+      },
+      {
+        "cuda_interval_ms": 8.391434326171876,
+        "wall_ms": 8.38805690407753
+      },
+      {
+        "cuda_interval_ms": 8.328601684570312,
+        "wall_ms": 8.325265347957611
+      }
+    ],
+    "amp_fp16": [
+      {
+        "cuda_interval_ms": 6.539324951171875,
+        "wall_ms": 6.536766886711121
+      },
+      {
+        "cuda_interval_ms": 6.548397827148437,
+        "wall_ms": 6.545806378126144
+      },
+      {
+        "cuda_interval_ms": 6.53828125,
+        "wall_ms": 6.535719931125641
+      },
+      {
+        "cuda_interval_ms": 6.549176025390625,
+        "wall_ms": 6.546642482280731
+      }
+    ]
+  },
+  "summary": {
+    "fp32": {
+      "cuda_interval_ms": 8.311930847167968,
+      "wall_ms": 8.308578729629517
+    },
+    "amp_fp16": {
+      "cuda_interval_ms": 6.543861389160156,
+      "wall_ms": 6.5412866324186325
+    }
+  },
+  "comparisons": {
+    "cuda_interval_ms": {
+      "speedup": 1.270187486082239,
+      "time_reduction_percent": 21.271464964247468
+    },
+    "wall_ms": {
+      "speedup": 1.270174997140804,
+      "time_reduction_percent": 21.270690869287677
+    }
+  },
+  "timing_scope": "Repeated GPU-resident forward calls, including per-call autocast overhead; excludes tokenization and CPU-to-GPU input transfer."
+}

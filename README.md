@@ -1,178 +1,203 @@
-# Financial Text Analysis and Inference System
+# Financial Text Classification & BERT Inference Optimization
 
-A learning-oriented ML project for **company-level Chinese financial news classification**, progressing toward model fine-tuning and GPU inference performance analysis.
+An ML systems project combining **company-level Chinese financial news classification** with **model computation verification, GPU profiling, and inference optimization**.
 
-**Current milestone: Stage 1 — Data Preparation and Baseline Evaluation.**
+The project fine-tunes BERT on article–company pairs, traces its execution from embeddings to classification logits, and evaluates mixed-precision inference on a single **NVIDIA RTX 3090 24GB**.
 
-Given a **target company and a news article**, the current classifier predicts whether the article is negative for that company under a binary mapping of the dataset annotations. It does not automatically extract companies or classify event types. Non-negative does not mean positive investment news.
+## Highlights
 
-## Stage 1 results
+- **Classification:** improved validation Macro-F1 from **0.6211 to 0.7548** over a TF-IDF + Logistic Regression baseline.
+- **Computation verification:** reconstructed a BERT Encoder layer and verified the complete forward path against native model outputs.
+- **GPU profiling:** identified Linear operations as the largest contributor to recorded GPU operator time and examined CPU submission versus GPU execution.
+- **Inference optimization:** reduced forward time from **8.312 to 6.544 ms** with FP16 automatic mixed precision — **1.270× faster, with 21.3% less time per forward**.
+- **Quality validation:** preserved identical class predictions on all **1,942 validation samples**, with unchanged Accuracy and Macro-F1.
 
-- Prepared **19,116 article–company samples** from 9,933 articles in the original training file.
-- Split articles by normalized-content groups before expanding company samples, with **zero group overlap** between training and validation.
-- Trained a character-level **TF-IDF + Logistic Regression** baseline on 17,174 company samples.
-- Achieved **0.6211 validation Macro-F1**, compared with 0.4045 for the majority baseline, on 1,942 validation samples.
-- Analyzed false positives and false negatives, including two multi-company articles where all target companies received a negative prediction despite mixed dataset labels.
+The timing comparison uses batch size 1 and a 512-token input. Full validation uses batch size 16.
 
-These are validation results from one split and one baseline run. BERT fine-tuning, final test evaluation, and inference performance experiments are not completed.
+## Task and Dataset
 
-## Task and dataset
+Given a **target company and a news article**, predict whether the article is negative for that company:
 
-Data source: [FinChina-SA](https://github.com/YerayL/FinChina-SA), associated with [Chinese Fine-Grained Financial Sentiment Analysis with Large Language Models](https://arxiv.org/abs/2306.14096).
+| Label | Meaning |
+|---|---|
+| `0` | Non-negative |
+| `1` | Negative |
 
-One source article can contain multiple company annotations. Each article–company pair becomes a separate classification sample:
+Data comes from [FinChina-SA](https://github.com/YerayL/FinChina-SA), associated with [Chinese Fine-Grained Financial Sentiment Analysis with Large Language Models](https://arxiv.org/abs/2306.14096). Original negative sentiment levels are mapped to `1`; other levels are mapped to `0`.
 
-```json
-{
-  "article_id": 123,
-  "title": "Example news title",
-  "text": "Example article text",
-  "company": "Example target company",
-  "raw_label": "-1",
-  "label": 1
-}
-```
+Each article can yield multiple company-specific samples. The implemented task assumes the target company is supplied; company extraction and event-subtype classification are outside its scope.
 
-The example above is schematic, not a real dataset record.
+## Experimental Setup
 
-| Original annotation | Binary label | Meaning |
-|---|---:|---|
-| -1, -2, -3 | 1 | Negative |
-| 0, 1, 2 | 0 | Non-negative |
+| Component | Configuration |
+|---|---|
+| GPU | NVIDIA GeForce RTX 3090 24GB |
+| Python | 3.12.3 |
+| PyTorch | 2.5.1+cu124 |
+| Transformers | 4.57.1 |
+| Model | Fine-tuned `bert-base-chinese` |
+| Architecture | 12 Encoder layers, hidden size 768, 12 attention heads |
+| BERT input | Target company paired with article title and body |
+| Maximum sequence length | 512 tokens |
+| Precision comparison | FP32 vs FP16 automatic mixed precision |
+| FP32 matmul TF32 | Disabled |
 
-The implemented conversion uses `int(sentiment_level) < 0` on the inspected label set. Unexpected values should be checked before using other data. This binary task differs from the paper's original fine-grained evaluation.
+## Stage 1 — Data Preparation and Baselines
 
-### Fixed split
+Converted **9,933 articles into 19,116 article–company samples** and split by normalized title/body groups before expanding company annotations. This keeps companies from the same article and exact normalized-content duplicates in the same partition, with **zero group overlap**.
 
 | Split | Articles | Company samples | Negative | Non-negative |
 |---|---:|---:|---:|---:|
 | Training | 8,940 | 17,174 | 11,471 | 5,703 |
 | Validation | 993 | 1,942 | 1,319 | 623 |
 
-The original training file contained no duplicate article IDs and seven extra articles with identical whitespace-normalized title/body content. Matching content was kept in the same group. Duplicate records were **retained within groups**, not fully deduplicated. The group split used seed 42 and approximately 90%/10% of groups. All company annotations for an article remain together.
+Established majority-class and character-level TF-IDF + Logistic Regression baselines. The latter achieved **0.7240 Accuracy and 0.6211 Macro-F1**, providing the reference for BERT evaluation.
 
-The author-provided test file is reserved for final evaluation and has not been used to choose this baseline. Exact content grouping does not rule out near-duplicate articles or establish a chronological split.
+## Stage 2 — BERT Input and Training Pipeline
 
-## Baseline method
+Implemented paired tokenization, batching, forward/loss computation, and a small training run with checkpoint save/reload validation. The input pipeline preserves the target-company segment and truncates the news segment when the combined input exceeds 512 tokens.
 
-The model receives the target company followed by the full title and body:
+## Stage 3 — Fine-Tuning and Classification Evaluation
 
-```python
-text = (
-    f"目标公司：{sample['company']}\n"
-    f"标题：{sample['title']}\n"
-    f"正文：{sample['text']}"
-)
-```
-
-| Component | Configuration |
-|---|---|
-| Feature extraction | `TfidfVectorizer(analyzer="char", ngram_range=(2, 4), min_df=3, max_features=50000)` |
-| Classifier | `LogisticRegression(max_iter=1000, random_state=42)` |
-| Majority baseline | Predict class 1, selected from the training labels |
-| Fitting | Training split only; validation uses the fitted pipeline |
-| Input scope | Full text; no BERT tokenizer or Transformer is used |
-
-### Validation performance
+Fine-tuned BERT for three epochs using AdamW, a learning rate of `2e-5`, and batch size 16.
 
 | Model | Accuracy | Macro-F1 |
 |---|---:|---:|
 | Majority baseline | 0.6792 | 0.4045 |
-| TF-IDF + Logistic Regression | **0.7240** | **0.6211** |
+| TF-IDF + Logistic Regression | 0.7240 | 0.6211 |
+| Fine-tuned BERT | **0.7873** | **0.7548** |
 
-![Validation baseline comparison](figures/stage1_baseline/baseline_comparison.png)
+![Classification performance comparison](figures/stage3_bert/model_comparison.png)
 
-| Class | Precision | Recall | F1 | Support |
-|---|---:|---:|---:|---:|
-| Non-negative | 0.6417 | 0.3162 | 0.4237 | 623 |
-| Negative | 0.7394 | 0.9166 | 0.8186 | 1,319 |
+BERT reduced false positives from **426 to 212**, while false negatives increased from **110 to 201**. The improvement in Macro-F1 reflects a more balanced result across the two classes.
 
-![Confusion matrix](figures/stage1_baseline/confusion_matrix.png)
+The TF-IDF pipeline uses full text, whereas BERT uses truncated input; this comparison evaluates the implemented pipelines rather than architectures with identical visible text.
 
-Rows are dataset labels; columns are predictions, ordered `[non_negative, negative]`. There are **426 false positives** and **110 false negatives**. The model predicts negative for 1,635 of 1,942 samples (84.2%).
+## Stage 4 — BERT Computation Verification
 
-![Class distribution and per-class metrics](figures/stage1_baseline/class_distribution_and_metrics.png)
+Reconstructed **QKV projections, multi-head attention, output projection, residual connections, LayerNorm, and FFN**, then checked the complete path through 12 Encoder layers, CLS selection, Pooler, and Classifier.
 
-The baseline improves over always predicting the majority class, but non-negative recall remains low. Accuracy alone hides this weakness.
+**Key results:** the manually reconstructed first layer matched the native layer within a maximum absolute difference of approximately **1.91e-6** on the inspected input. Sequential execution through native modules reproduced the full model's logits exactly in the CPU check.
 
-## Error analysis
+![BERT architecture and computation](figures/stage4_bert/bert_architecture.png)
 
-| Article ID | Target / situation | Observation |
-|---|---|---|
-| 672492854 | Huaqi, mentioned as an invested company | False positive; the reported event concerns another company's controller. |
-| 670901039 | Asia-Pacific accounting firm | False positive; the auditor reports problems at its client, rather than being described as penalized itself. |
-| 670790738 | Zhongtian Fluorosilicone | False negative despite an explicit IPO termination event. Feature-level causes have not been established. |
-| 672739753 | Xingyin Growth Capital | False negative relative to an original “related enterprise issues” annotation; the intended scope of company-level negativity needs clarification. |
+## Stage 5 — GPU Profiling and Execution Analysis
 
-In the first two articles, all six company samples were predicted negative: two matched negative labels and four were false positives. These were deliberately inspected error cases, not a representative sample. Identical predicted labels do not imply identical prediction scores or prove that company names have no effect.
+Used PyTorch Profiler to connect model operations to GPU kernels and visualize CPU submission alongside GPU execution.
 
-## Repository organization
+**Key finding:** Linear-related `aten::addmm` operations accounted for approximately **70.7% of recorded GPU operator self time** in the initial FP32 profile. These operations include QKV projections, attention output projections, and FFN layers.
 
-| Path | Purpose |
-|---|---|
-| `practice/` | Data-conversion, splitting, and small PyTorch learning exercises |
-| `scripts/stage1_train_baseline.py` | Existing baseline training and evaluation script |
-| `scripts/stage1_inspect_errors.py` | Existing validation error inspection script |
-| `scripts/stage1_plot_results.py` | Reproduce the Stage 1 figures |
-| `docs/stage1_notes.md` | Chinese learning notes, findings, and limitations |
-| `docs/github_upload.md` | Packaging and first-push instructions |
-| `results/stage1_baseline/` | Aggregate results and original local evaluation outputs |
-| `results/stage1_learning/` | Reported numbers from the synthetic Linear exercise |
-| `figures/stage1_baseline/` | Financial-classification result figures |
-| `figures/stage1_learning/` | Educational plots, separate from project evaluation |
-| `data/raw/`, `data/processed/` | Local datasets; excluded from Git |
-| `models/` | Local model artifacts; excluded from Git |
+![Encoder CPU/GPU timeline](figures/stage5_profiling/20261006_234951_816875/trace_analysis/encoder_cpu_gpu_timeline.png)
 
-The documentation package supplements the existing server project. It does not contain or replace the original training/preparation scripts.
+The analysis distinguished **kernel execution time, elapsed execution intervals, and CPU-side operator duration**. Separate instrumentation experiments showed that hooks and profiling can affect measured performance, so optimization benchmarks were conducted without them.
 
-## Run the current milestone
+## Stage 6 — Mixed-Precision Inference Optimization
 
-The existing server environment uses Python 3.12.3 and scikit-learn 1.6.1. PyTorch 2.5.1+cu124 is used for the learning exercise, not for training the TF-IDF classifier. The RTX 3090 is available for later neural-model work; Stage 1 does not establish GPU speed measurements.
+Applied FP16 automatic mixed precision while retaining FP32 model parameters, then evaluated speed, prediction agreement, and execution changes.
 
-1. Use a Python environment with the dependencies listed in `requirements-stage1.txt`. Retain a known working environment rather than upgrading it just to make plots. Capture actual package versions as described in the upload guide.
-2. Obtain the dataset from the original repository and place its files at `data/raw/train.json` and `data/raw/test.json`.
-3. In the existing project, regenerate the fixed split if needed:
+### Forward performance
+
+| Mode | Forward time | Speedup |
+|---|---:|---:|
+| FP32 | 8.312 ms | 1.000× |
+| AMP FP16 | **6.544 ms** | **1.270×** |
+
+Timing uses the same GPU-resident input with **batch size 1 and sequence length 512**. Each condition has 20 warm-up calls and 50 measured calls per block, across four rounds with alternating execution order. Results are the median of block means, measured with CUDA Events.
+
+Each forward enters a separate autocast context. Tokenization, input transfer, hooks, and Profiler are excluded from the benchmark.
+
+### Validation quality
+
+| Metric | FP32 | AMP FP16 |
+|---|---:|---:|
+| Accuracy | 0.787333 | 0.787333 |
+| Macro-F1 | 0.754840 | 0.754840 |
+| Changed predictions relative to FP32 | — | **0 / 1,942** |
+
+Both modes use identical batches and input tensors at batch size 16. The maximum absolute probability difference was **0.001803**, and no NaN or Inf outputs were observed.
+
+### Execution changes
+
+![GPU kernel time by precision](figures/stage6_precision/precision_kernel_comparison.png)
+
+| GPU kernel category | FP32 | AMP FP16 |
+|---|---:|---:|
+| Linear | 5.8693 ms | 1.9653 ms |
+| Attention core | 1.9810 ms | 0.2922 ms |
+| Copy / conversion | 0.0000 ms | 1.2029 ms |
+
+Profiling showed lower Linear kernel time and an automatic attention-backend change from **memory-efficient attention to Flash Attention**, alongside additional copy/conversion work. The attention improvement therefore includes a backend change, not only reduced numerical precision.
+
+These are profiled kernel-duration sums, separate from the unprofiled forward timings above.
+
+## Running the Project
+
+Run commands from the repository root. Obtain the dataset separately and place the source files at `data/raw/train.json` and `data/raw/test.json`. GPU experiments require a CUDA-enabled PyTorch environment; baseline training and plotting additionally require scikit-learn and Matplotlib.
+
+### Prepare data and train
 
 ```bash
 python practice/split_data.py
-```
-
-4. Train and inspect the baseline:
-
-```bash
 python scripts/stage1_train_baseline.py
-python scripts/stage1_inspect_errors.py
+python scripts/stage3_train_bert.py
+python scripts/stage3_predict_validation.py
 ```
 
-5. Reproduce figures from the recorded aggregate snapshot, without retraining:
+Inference experiments load the trained checkpoint and tokenizer from `models/stage3_bert_full/`.
+
+### Verify computation and inspect execution
 
 ```bash
-python scripts/stage1_plot_results.py
+python scripts/stage4_verify_bert_layer.py
+python scripts/stage4_verify_bert_forward.py
+python scripts/stage5_profile_bert.py
 ```
 
-To recompute the baseline plots from the original local prediction file:
+### Reproduce the precision comparison
 
 ```bash
-python scripts/stage1_plot_results.py --predictions results/stage1_baseline/validation_predictions.jsonl
+python scripts/stage6_inspect_precision.py
+python scripts/stage6_benchmark_precision.py
+python scripts/stage6_validate_precision.py
+python scripts/stage6_profile_precision.py
 ```
 
-The snapshot `reported_summary.json` was transcribed from the original server output; it is not a replacement for the original `validation_metrics.json` or prediction file. The Linear figure similarly uses recorded, rounded outputs rather than a new training run. Exact environment capture and clean-environment reproduction remain follow-up work. The original run reported an `iprint` solver-option warning; package compatibility should be checked before pinning a fully reproduced environment.
+Stage 6 outputs are written to `results/stage6_precision/`, including:
 
-## Roadmap
+| File | Contents |
+|---|---|
+| `benchmark.json` | Benchmark configuration and individual timing rounds |
+| `validation_summary.json` | Classification metrics and numerical differences |
+| `validation_comparison.jsonl` | Per-sample predictions and probabilities |
+| `profiling/kernel_comparison.json` | Kernel names and timing breakdowns |
 
-- [x] **Stage 1 — Data and baseline:** sample conversion, grouped split, majority/TF-IDF baselines, initial error analysis, and result figures.
-- [ ] **Stage 2 — BERT input and training basics:** tokenizer, paired input, tensor shapes, forward pass, tiny-sample training, save/reload.
-- [ ] **Stage 3 — Fine-tuning and evaluation:** full training, validation comparison, broader error analysis, and one controlled improvement.
-- [ ] **Stage 4 — Inference and performance:** prediction entry point, input-length/batch experiments, GPU timing, throughput, memory, and quality trade-offs.
-- [ ] **Stage 5 — Final evaluation and release:** freeze choices, evaluate the reserved test set, verify reproduction, and summarize completed results.
+Run performance measurements without competing GPU workloads. Stage 6 scripts use fixed output paths and update their results when rerun.
 
-## Limitations and next questions
+## Project Organization
 
-- The baseline has limited demonstrated ability to associate events with the specified target company.
-- Some labels involve related-company risk or uncertain entity mappings; annotation disagreement is not automatically a model-understanding failure.
-- Only initial cases have been reviewed; the planned broader review of at least 20 validation errors is not complete.
-- Future BERT inputs may be truncated. A fair model comparison must distinguish same-visible-text results from this full-text baseline.
-- No BERT fine-tuning, GPU inference acceleration, real-time news ingestion, or trading-return evaluation has been completed.
-- Raw news, processed full text, and full-text prediction files are not redistributed here. Obtain data from the original source and follow its applicable terms.
+| Directory | Purpose |
+|---|---|
+| `scripts/` | Training, evaluation, verification, profiling, and optimization |
+| `practice/` | Data preparation and smaller implementation exercises |
+| `results/` | Metrics, predictions, benchmark outputs, and generated traces |
+| `figures/` | Classification, architecture, and performance visualizations |
+| `docs/` | Supporting development and learning notes |
+| `data/` | Local datasets; excluded from Git |
+| `models/` | Local model artifacts; excluded from Git |
 
-See [Stage 1 notes](docs/stage1_notes.md) for the learning record, including the distinction between the synthetic Linear exercise and financial classification.
+## What This Project Demonstrates
+
+- Group-aware data preparation and comparison of classical and Transformer classifiers
+- Numerical verification of Transformer internals and the complete inference path
+- Operator-level profiling and interpretation of asynchronous CPU/GPU execution
+- Controlled inference benchmarking with separate instrumentation checks
+- Optimization evaluated against both runtime performance and classification quality
+
+## Scope and Limitations
+
+Reported classification results use one validation split; the reserved test set has not been evaluated. Exact-content grouping does not eliminate near-duplicates, and long articles may lose relevant evidence through BERT's 512-token truncation.
+
+The measured speedup applies to the stated hardware and workload. It is a forward-time result, not end-to-end serving latency, and does not establish memory savings or equivalent gains at other batch sizes. Identical validation predictions do not guarantee agreement on all future inputs.
+
+The project uses existing PyTorch and Transformers kernels. Custom kernel implementation and production serving are outside the completed scope.
+
