@@ -85,9 +85,9 @@ Reconstructed **QKV projections, multi-head attention, output projection, residu
 
 **Key results:** the manually reconstructed first layer matched the native layer within a maximum absolute difference of approximately **1.91e-6** on the inspected input. Sequential execution through native modules reproduced the full model's logits exactly in the CPU check.
 
-[Details — notes in Chinese](docs/stage4_notes.md)
-
 ![BERT architecture and computation](figures/stage4_bert/bert_architecture.png)
+
+[Details — notes in Chinese](docs/stage4_notes.md)
 
 ## Stage 5 — GPU Profiling and Execution Analysis
 
