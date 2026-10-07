@@ -53,9 +53,13 @@ Converted **9,933 articles into 19,116 article–company samples** and split by 
 
 Established majority-class and character-level TF-IDF + Logistic Regression baselines. The latter achieved **0.7240 Accuracy and 0.6211 Macro-F1**, providing the reference for BERT evaluation.
 
+[Details — notes in Chinese](docs/stage1_notes.md)
+
 ## Stage 2 — BERT Input and Training Pipeline
 
 Implemented paired tokenization, batching, forward/loss computation, and a small training run with checkpoint save/reload validation. The input pipeline preserves the target-company segment and truncates the news segment when the combined input exceeds 512 tokens.
+
+[Details — notes in Chinese](docs/stage2_notes.md)
 
 ## Stage 3 — Fine-Tuning and Classification Evaluation
 
@@ -73,11 +77,15 @@ BERT reduced false positives from **426 to 212**, while false negatives increase
 
 The TF-IDF pipeline uses full text, whereas BERT uses truncated input; this comparison evaluates the implemented pipelines rather than architectures with identical visible text.
 
+[Details — notes in Chinese](docs/stage3_notes.md)
+
 ## Stage 4 — BERT Computation Verification
 
 Reconstructed **QKV projections, multi-head attention, output projection, residual connections, LayerNorm, and FFN**, then checked the complete path through 12 Encoder layers, CLS selection, Pooler, and Classifier.
 
 **Key results:** the manually reconstructed first layer matched the native layer within a maximum absolute difference of approximately **1.91e-6** on the inspected input. Sequential execution through native modules reproduced the full model's logits exactly in the CPU check.
+
+[Details — notes in Chinese](docs/stage4_notes.md)
 
 ![BERT architecture and computation](figures/stage4_bert/bert_architecture.png)
 
@@ -90,6 +98,8 @@ Used PyTorch Profiler to connect model operations to GPU kernels and visualize C
 ![Encoder CPU/GPU timeline](figures/stage5_profiling/20261006_234951_816875/trace_analysis/encoder_cpu_gpu_timeline.png)
 
 The analysis distinguished **kernel execution time, elapsed execution intervals, and CPU-side operator duration**. Separate instrumentation experiments showed that hooks and profiling can affect measured performance, so optimization benchmarks were conducted without them.
+
+[Details — notes in Chinese](docs/stage5_notes.md)
 
 ## Stage 6 — Mixed-Precision Inference Optimization
 
@@ -129,6 +139,8 @@ Both modes use identical batches and input tensors at batch size 16. The maximum
 Profiling showed lower Linear kernel time and an automatic attention-backend change from **memory-efficient attention to Flash Attention**, alongside additional copy/conversion work. The attention improvement therefore includes a backend change, not only reduced numerical precision.
 
 These are profiled kernel-duration sums, separate from the unprofiled forward timings above.
+
+[Details — notes in Chinese](docs/stage6_notes.md)
 
 ## Running the Project
 
@@ -172,6 +184,7 @@ Stage 6 outputs are written to `results/stage6_precision/`, including:
 | `profiling/kernel_comparison.json` | Kernel names and timing breakdowns |
 
 Run performance measurements without competing GPU workloads. Stage 6 scripts use fixed output paths and update their results when rerun.
+
 
 ## Project Organization
 
